@@ -1,0 +1,24 @@
+{
+    "name":        "kodicms/widgets",
+    "type":        "kodicms-module",
+    "description": "The official KodiCMS Widgets module",
+    "homepage":    "http://www.kodicms.ru/",
+    "license":     "MIT",
+    "keywords":    ["laravel", "framework", "kodicms", "cms", "module", "widgets"],
+    "authors": [
+        {
+            "name":     "Pavel Buchnev",
+            "email":    "butschster@gmail.com",
+            "homepage": "http://www.kodicms.ru/",
+            "role":     "developer"
+        }
+    ],
+    "support": {
+        "issues":   "https://github.com/KodiComponents/module-widgets/issues",
+        "forum":    "http://www.kodicms.ru/forum",
+        "source":   "https://github.com/KodiComponents/module-widgets"
+    },
+    "require": {
+        "kodicms/core": "dev-master"
+    }
+}
