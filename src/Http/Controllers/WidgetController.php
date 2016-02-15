@@ -25,9 +25,25 @@ class WidgetController extends BackendController
 
         $query = $repository->getModel()->newQuery();
 
+        $widgetTypeLinks = [
+            link_to_route(
+                'backend.widget.list',
+                \UI::label('All', is_null($type) ? 'primary' : 'default'),
+                []
+            )
+        ];
+
         foreach (WidgetManagerDatabase::getAvailableTypes() as $group => $types) {
             if (isset($types[$type])) {
                 $this->breadcrumbs->add($types[$type]);
+            }
+
+            foreach($types as $key => $title) {
+                $widgetTypeLinks[] = link_to_route(
+                    'backend.widget.list.by_type',
+                    \UI::label($title, $key == $type ? 'primary' : 'default'),
+                    [$key]
+                );
             }
         }
 
@@ -37,7 +53,7 @@ class WidgetController extends BackendController
 
         $widgets = $query->paginate();
 
-        $this->setContent('widgets.list', compact('widgets'));
+        $this->setContent('widgets.list', compact('widgets', 'type', 'widgetTypeLinks'));
     }
 
     /**
@@ -53,13 +69,16 @@ class WidgetController extends BackendController
         return $this->setContent('widgets.page.ajax_list', compact('widgets'));
     }
 
-    public function getCreate()
+    /**
+     * @param string $type
+     */
+    public function getCreate($type = 'html')
     {
         $this->setTitle(trans($this->wrapNamespace('core.title.create')));
 
         $types = WidgetManagerDatabase::getAvailableTypes();
 
-        $this->setContent('widgets.create', compact('types'));
+        $this->setContent('widgets.create', compact('types', 'type'));
     }
 
     /**

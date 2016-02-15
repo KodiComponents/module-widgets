@@ -22,7 +22,7 @@
 	<div class="form-group">
 		<label class="control-label col-md-3">@lang('widgets::core.field.type')</label>
 		<div class="col-md-6">
-			{!! Form::select('type', $types, 'html', ['class' => 'form-control', 'size' => 10]) !!}
+			{!! Form::select('type', $types, $type, ['class' => 'form-control', 'size' => 10]) !!}
 		</div>
 	</div>
 </div>

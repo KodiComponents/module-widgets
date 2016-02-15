@@ -1,12 +1,17 @@
 <div class="panel">
 	<div class="panel-heading">
 		@if (acl_check('widgets.add'))
-		{!! link_to_route('backend.widget.create', trans('widgets::core.button.create'), [], [
+		{!! link_to_route('backend.widget.create', trans('widgets::core.button.create'), [$type], [
 			'class' => 'btn btn-primary btn-labeled', 'data-icon' => 'plus', 'data-hotkeys' => 'ctrl+a'
 		]) !!}
 		@endif
 	</div>
 
+	<div class="panel-heading">
+		@foreach($widgetTypeLinks as $link)
+			{!! $link !!}
+		@endforeach
+	</div>
 	@if(count($widgets) > 0)
 	<table class="table table-primary table-striped table-hover">
 		<colgroup>
