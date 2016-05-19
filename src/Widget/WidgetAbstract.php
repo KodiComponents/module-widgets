@@ -8,7 +8,7 @@ use KodiCMS\Widgets\Manager\WidgetManager;
 use KodiCMS\Widgets\Contracts\Widget as WidgetInterface;
 use KodiCMS\Widgets\Contracts\WidgetManager as WidgetManagerInterface;
 
-abstract class WidgetAbstract implements WidgetInterface, \ArrayAccess
+abstract class WidgetAbstract implements WidgetInterface
 {
     use Settings;
 
