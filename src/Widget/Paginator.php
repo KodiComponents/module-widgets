@@ -9,7 +9,7 @@ use KodiCMS\Widgets\Manager\WidgetManagerDatabase;
 use KodiCMS\Widgets\Traits\WidgetRender;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class Paginator extends Decorator implements WidgetRenderable
+class Paginator extends WidgetAbstract implements WidgetRenderable
 {
     use WidgetRender;
 
@@ -51,7 +51,7 @@ class Paginator extends Decorator implements WidgetRenderable
 
     public function afterLoad()
     {
-        $linkedWidget = WidgetManagerDatabase::getWidgetById($this->linked_widget_id);
+        $linkedWidget = $this->widgetManager->getWidgetById($this->linked_widget_id);
         $paginator = null;
 
         if (! is_null($linkedWidget) and ($linkedWidget instanceof WidgetPaginator)) {
@@ -70,7 +70,7 @@ class Paginator extends Decorator implements WidgetRenderable
      */
     public function prepareSettingsData()
     {
-        $widgets = WidgetManagerDatabase::getAllWidgets()->filter(function ($widget) {
+        $widgets = $this->widgetManager->getAllWidgets()->filter(function ($widget) {
             return $widget instanceof WidgetPaginator;
         });
 

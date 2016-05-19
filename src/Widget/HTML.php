@@ -5,7 +5,7 @@ namespace KodiCMS\Widgets\Widget;
 use KodiCMS\Widgets\Contracts\WidgetCacheable;
 use KodiCMS\Widgets\Traits\WidgetCache;
 
-class HTML extends Decorator implements WidgetCacheable
+class HTML extends WidgetAbstract implements WidgetCacheable
 {
     use WidgetCache;
 
