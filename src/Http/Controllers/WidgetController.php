@@ -2,6 +2,7 @@
 
 namespace KodiCMS\Widgets\Http\Controllers;
 
+use KodiCMS\Widgets\Contracts\WidgetManager;
 use Meta;
 use WYSIWYG;
 use Illuminate\View\View;
@@ -16,10 +17,11 @@ class WidgetController extends BackendController
 {
 
     /**
+     * @param WidgetManager    $widgetManager
      * @param WidgetRepository $repository
      * @param string           $type
      */
-    public function getIndex(WidgetRepository $repository, $type = null)
+    public function getIndex(WidgetManager $widgetManager, WidgetRepository $repository, $type = null)
     {
         Meta::loadPackage('editable');
 
@@ -33,7 +35,7 @@ class WidgetController extends BackendController
             )
         ];
 
-        foreach (WidgetManagerDatabase::getAvailableTypes() as $group => $types) {
+        foreach ($widgetManager->getAvailableTypes() as $group => $types) {
             if (isset($types[$type])) {
                 $this->breadcrumbs->add($types[$type]);
             }
@@ -70,13 +72,14 @@ class WidgetController extends BackendController
     }
 
     /**
-     * @param string $type
+     * @param WidgetManager $widgetManager
+     * @param string        $type
      */
-    public function getCreate($type = 'html')
+    public function getCreate(WidgetManager $widgetManager, $type = 'html')
     {
         $this->setTitle(trans($this->wrapNamespace('core.title.create')));
 
-        $types = WidgetManagerDatabase::getAvailableTypes();
+        $types = $widgetManager->getAvailableTypes();
 
         $this->setContent('widgets.create', compact('types', 'type'));
     }
@@ -178,15 +181,17 @@ class WidgetController extends BackendController
     }
 
     /**
+     * @param WidgetManager    $widgetManager
      * @param WidgetRepository $repository
-     * @param int          $id
+     * @param int              $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postLocation(WidgetRepository $repository, $id)
+    public function postLocation(WidgetManager $widgetManager, WidgetRepository $repository, $id)
     {
         $repository->findOrFail($id);
-        WidgetManagerDatabase::placeWidgetsOnPages($id, $this->request->input('blocks', []));
+        
+        $widgetManager->placeWidgetsOnPages($id, $this->request->input('blocks', []));
 
         return back();
     }

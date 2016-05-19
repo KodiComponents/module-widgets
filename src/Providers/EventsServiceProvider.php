@@ -12,6 +12,10 @@ use KodiCMS\Widgets\Contracts\WidgetPaginator;
 use KodiCMS\Widgets\Collection\PageWidgetCollection;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as BaseEventServiceProvider;
+use KodiCMS\Widgets\Observers\WidgetObserver;
+use KodiCMS\Widgets\Manager\WidgetManagerDatabase;
+use Request;
+use KodiCMS\Pages\Model\Page;
 
 class EventsServiceProvider extends BaseEventServiceProvider
 {
@@ -26,21 +30,20 @@ class EventsServiceProvider extends BaseEventServiceProvider
     {
         $events->listen('frontend.found', function ($page) {
             $this->app->singleton('layout.widgets', function ($app) use ($page) {
-                return new PageWidgetCollection($page->getId());
+                return new PageWidgetCollection(
+                    $app['widget.manager'],
+                    $page->getId()
+                );
             });
 
             $block = new Block(app('layout.widgets'));
             $this->app->singleton('layout.block', function ($app) use ($block) {
                 return $block;
             });
-
         }, 9000);
 
         $events->listen('view.page.create', function ($page) {
-            echo view('widgets::widgets.page.create')
-                ->with('page', $page)
-                ->with('pages', $page->getSitemap())
-                ->render();
+            echo view('widgets::widgets.page.create')->with('page', $page)->with('pages', $page->getSitemap())->render();
         });
 
         $events->listen('view.page.edit', function ($page) {
@@ -51,7 +54,7 @@ class EventsServiceProvider extends BaseEventServiceProvider
 
         $events->listen('view.widget.edit', function ($widget) {
             if ($widget->isRenderable()) {
-                $commentKeys = WidgetManager::getTemplateKeysByType($widget->type);
+                $commentKeys = app('widget.manager')->getTemplateKeysByType($widget->type);
                 $snippets = (new SnippetCollection())->getHTMLSelectChoices();
 
                 echo view('widgets::widgets.partials.renderable', compact('widget', 'commentKeys', 'snippets'))->render();
@@ -67,9 +70,7 @@ class EventsServiceProvider extends BaseEventServiceProvider
                 $assetsPackages = PackageManager::getHTMLSelectChoice();
                 $widgetList = Widget::where('id', '!=', $widget->id)->lists('name', 'id')->all();
 
-                echo view('widgets::widgets.partials.renderable_buttons', compact(
-                    'widget', 'commentKeys', 'snippets', 'assetsPackages', 'widgetList'
-                ))->render();
+                echo view('widgets::widgets.partials.renderable_buttons', compact('widget', 'commentKeys', 'snippets', 'assetsPackages', 'widgetList'))->render();
             }
 
             if (acl_check('widgets.roles') and ! $widget->isHandler()) {
@@ -91,5 +92,29 @@ class EventsServiceProvider extends BaseEventServiceProvider
                 echo view('widgets::widgets.partials.handler', compact('widget'))->render();
             }
         });
+
+        Page::created(function ($page) {
+            $pageId = array_get(Request::get('widgets'), 'from_page_id');
+
+            if (! empty($pageId)) {
+                app('widget.manager')->copyWidgets($pageId, $page->id);
+            }
+        });
+
+        Page::deleted(function ($page) {
+            app('widget.manager')->deleteWidgetsFromPage($page->id);
+        });
+
+        Page::saving(function ($page) {
+            $postData = Request::input('widget', []);
+
+            foreach ($postData as $widgetId => $location) {
+                if (array_key_exists('block', $location)) {
+                    app('widget.manager')->updateWidgetOnPage($widgetId, $page->id, $location);
+                }
+            }
+        });
+
+        Widget::observe(new WidgetObserver);
     }
 }

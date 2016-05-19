@@ -53,7 +53,7 @@ class WidgetRenderHTML extends WidgetRenderAbstract
         $preparedData['settings'] = $widget->getSettings();
         $preparedData['header'] = $widget->getSetting('header');
 
-        $preparedData['relatedWidgets'] = WidgetManager::buildWidgetCollection(
+        $preparedData['relatedWidgets'] = app(\KodiCMS\Widgets\Contracts\WidgetManager::class)->buildWidgetCollection(
             $widget->getRalatedWidgets()
         );
 

@@ -37,6 +37,7 @@ class WidgetController extends Controller
         $pageId = $this->getRequiredParameter('id');
         $data = (array) $this->getRequiredParameter('data');
 
+        /** @var Page $page */
         $page = Page::find($pageId);
         $widgetsData = [];
 

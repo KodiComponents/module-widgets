@@ -10,7 +10,7 @@ use KodiCMS\Widgets\Contracts\WidgetCacheable;
 use KodiCMS\Widgets\Contracts\WidgetRenderable;
 use KodiCMS\Widgets\Contracts\WidgetManager as WidgetManagerInterface;
 
-class WidgetManager implements WidgetManagerInterface
+abstract class WidgetManager implements WidgetManagerInterface
 {
     /**
      * Проверка переданного класса на существоавние.
@@ -19,7 +19,7 @@ class WidgetManager implements WidgetManagerInterface
      *
      * @return bool
      */
-    public static function isClassExists($class)
+    public function isClassExists($class)
     {
         return class_exists($class);
     }
@@ -31,9 +31,9 @@ class WidgetManager implements WidgetManagerInterface
      *
      * @return bool
      */
-    public static function isWidgetable($class)
+    public function isWidgetable($class)
     {
-        return ! static::isCorrupt($class);
+        return ! $this->isCorrupt($class);
     }
 
     /**
@@ -43,9 +43,9 @@ class WidgetManager implements WidgetManagerInterface
      *
      * @return bool
      */
-    public static function isCorrupt($class)
+    public function isCorrupt($class)
     {
-        if (! static::isClassExists($class)) {
+        if (! $this->isClassExists($class)) {
             return true;
         }
 
@@ -61,9 +61,9 @@ class WidgetManager implements WidgetManagerInterface
      *
      * @return bool
      */
-    public static function isHandler($class)
+    public function isHandler($class)
     {
-        return static::isClassExists($class) and in_array(WidgetHandler::class, class_implements($class));
+        return $this->isClassExists($class) and in_array(WidgetHandler::class, class_implements($class));
     }
 
     /**
@@ -71,9 +71,9 @@ class WidgetManager implements WidgetManagerInterface
      *
      * @return bool
      */
-    public static function isRenderable($class)
+    public function isRenderable($class)
     {
-        return static::isClassExists($class) and in_array(WidgetRenderable::class, class_implements($class));
+        return $this->isClassExists($class) and in_array(WidgetRenderable::class, class_implements($class));
     }
 
     /**
@@ -81,20 +81,20 @@ class WidgetManager implements WidgetManagerInterface
      *
      * @return bool
      */
-    public static function isCacheable($class)
+    public function isCacheable($class)
     {
-        return static::isClassExists($class) and in_array(WidgetCacheable::class, class_implements($class));
+        return $this->isClassExists($class) and in_array(WidgetCacheable::class, class_implements($class));
     }
 
     /**
      * @return array
      */
-    public static function getAvailableTypes()
+    public function getAvailableTypes()
     {
         $types = [];
         foreach (config('widgets', []) as $group => $widgets) {
             foreach ($widgets as $type => $widget) {
-                if (! isset($widget['class']) or static::isCorrupt($widget['class'])) {
+                if (! isset($widget['class']) or $this->isCorrupt($widget['class'])) {
                     continue;
                 }
 
@@ -110,9 +110,9 @@ class WidgetManager implements WidgetManagerInterface
      *
      * @return array
      */
-    public static function getTemplateKeysByType($needleType)
+    public function getTemplateKeysByType($needleType)
     {
-        $class = static::getClassNameByType($needleType);
+        $class = $this->getClassNameByType($needleType);
 
         if (is_null($class)) {
             return [];
@@ -145,11 +145,11 @@ class WidgetManager implements WidgetManagerInterface
      *
      * @return string|null
      */
-    public static function getClassNameByType($needleType)
+    public function getClassNameByType($needleType)
     {
         foreach (config('widgets', []) as $group => $widgets) {
             foreach ($widgets as $type => $widget) {
-                if (! isset($widget['class']) or static::isCorrupt($widget['class'])) {
+                if (! isset($widget['class']) or $this->isCorrupt($widget['class'])) {
                     continue;
                 }
 
@@ -167,11 +167,11 @@ class WidgetManager implements WidgetManagerInterface
      *
      * @return string|null
      */
-    public static function getTypeByClassName($needleClass)
+    public function getTypeByClassName($needleClass)
     {
         foreach (config('widgets', []) as $group => $widgets) {
             foreach ($widgets as $type => $widget) {
-                if (! isset($widget['class']) or static::isCorrupt($widget['class'])) {
+                if (! isset($widget['class']) or $this->isCorrupt($widget['class'])) {
                     continue;
                 }
                 if (strpos($widget['class'], $needleClass) !== false) {
@@ -188,7 +188,7 @@ class WidgetManager implements WidgetManagerInterface
      *
      * @return Collection
      */
-    public static function buildWidgetCollection(Collection $widgets)
+    public function buildWidgetCollection(Collection $widgets)
     {
         return $widgets->map(function ($widget) {
             return $widget->toWidget();
@@ -207,15 +207,15 @@ class WidgetManager implements WidgetManagerInterface
      *
      * @return Widget|null
      */
-    public static function makeWidget($type, $name, $description = null, array $settings = null)
+    public function makeWidget($type, $name, $description = null, array $settings = null)
     {
-        $class = static::getClassNameByType($type);
+        $class = $this->getClassNameByType($type);
 
-        if (! static::isWidgetable($class)) {
+        if (! $this->isWidgetable($class)) {
             return;
         }
 
-        $widget = new $class($name, $description);
+        $widget = app($class, [$this, $name, $description]);
 
         if (! is_null($settings)) {
             $widget->setSettings($settings);

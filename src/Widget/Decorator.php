@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use KodiCMS\Support\Traits\Settings;
 use KodiCMS\Widgets\Manager\WidgetManager;
 use KodiCMS\Widgets\Contracts\Widget as WidgetInterface;
+use KodiCMS\Widgets\Contracts\WidgetManager as WidgetManagerInterface;
 
 abstract class Decorator implements WidgetInterface, \ArrayAccess
 {
@@ -62,12 +63,20 @@ abstract class Decorator implements WidgetInterface, \ArrayAccess
     private $id;
 
     /**
-     * @param string $name
-     * @param string $description
+     * @var WidgetManagerInterface
      */
-    public function __construct($name, $description = '')
+    protected $widgetManager;
+
+    /**
+     * @param WidgetManagerInterface $widgetManager
+     * @param string                 $name
+     * @param string                 $description
+     */
+    public function __construct(WidgetManagerInterface $widgetManager, $name, $description = '')
     {
-        $this->type = WidgetManager::getTypeByClassName(get_called_class());
+        $this->widgetManager = $widgetManager;
+
+        $this->type = $widgetManager->getTypeByClassName(get_called_class());
         $this->name = $name;
         $this->description = $description;
         $this->relatedWidgets = new Collection;
@@ -120,7 +129,7 @@ abstract class Decorator implements WidgetInterface, \ArrayAccess
      */
     public function getTypeTitle()
     {
-        foreach (WidgetManager::getAvailableTypes() as $group => $types) {
+        foreach ($this->widgetManager->getAvailableTypes() as $group => $types) {
             if (isset($types[$this->type])) {
                 return $types[$this->type];
             }

@@ -73,7 +73,7 @@ class WidgetRepository extends BaseRepository
             $query->where('page_id', $pageId);
         }
 
-        $ids = $query->lists('widget_id');
+        $ids = $query->pluck('widget_id');
 
         $widgetList = $this->model->newQuery();
 
@@ -81,16 +81,10 @@ class WidgetRepository extends BaseRepository
             $widgetList->whereNotIn('id', $ids);
         }
 
-        $widgets = [];
-
-        foreach ($widgetList->get() as $widget) {
-            if ($widget->isCorrupt() or $widget->isHandler()) {
-                continue;
-            }
-
-            $widgets[$widget->getType()][$widget->id] = $widget;
-        }
-
-        return $widgets;
+        return $widgetList->get()->filter(function($widget) {
+            return !$widget->isCorrupt() and !$widget->isHandler();
+        })->groupBy(function ($widget) {
+            return $widget->getType();
+        });
     }
 }

@@ -5,10 +5,10 @@
 		<span class="panel-title">{{ $type }}</span>
 	</div>
 	<div class="panel-body padding-sm">
-		@foreach ($_widgets as $id => $widget)
+		@foreach ($_widgets as $widget)
 		{!! Form::button($widget->name, [
 			'icon' => 'tag',
-			'data-id' => $id,
+			'data-id' => $widget->id,
 			'class' => 'popup-widget-item btn btn-default'
 		]) !!}
 		@endforeach

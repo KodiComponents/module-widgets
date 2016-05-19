@@ -7,14 +7,14 @@ interface WidgetManager
     /**
      * @return array
      */
-    public static function getAvailableTypes();
+    public function getAvailableTypes();
 
     /**
      * @param string $needleType
      *
      * @return string|null
      */
-    public static function getClassNameByType($needleType);
+    public function getClassNameByType($needleType);
 
     /**
      * @param string      $type
@@ -24,5 +24,19 @@ interface WidgetManager
      *
      * @return Widget|null
      */
-    public static function makeWidget($type, $name, $description = null, array $settings = null);
+    public function makeWidget($type, $name, $description = null, array $settings = null);
+
+    /**
+     * @param int $pageId
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getWidgetsByPage($pageId);
+
+    /**
+     * @param int $pageId
+     *
+     * @return array
+     */
+    public function getPageWidgetBlocks($pageId);
 }

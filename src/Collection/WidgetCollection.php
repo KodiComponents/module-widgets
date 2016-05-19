@@ -72,6 +72,7 @@ class WidgetCollection implements WidgetCollectionInterface, Iterator
     /**
      * @param WidgetInterface $widget
      * @param string          $block
+     * @param int             $position
      *
      * @return $this
      */

@@ -15,7 +15,7 @@
 		</tr>
 		</thead>
 		<tbody>
-		<?php echo recurse_pages($pages, 0, $layoutBlocks, $widgetBlocks, $blocksToExclude); ?>
+			{!! recurse_pages($pages, 0, $layoutBlocks, $widgetBlocks, $blocksToExclude) !!}
 		</tbody>
 	</table>
 	<hr />

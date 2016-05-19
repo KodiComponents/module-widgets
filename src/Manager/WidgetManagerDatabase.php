@@ -12,7 +12,7 @@ class WidgetManagerDatabase extends WidgetManager
      *
      * @return \Illuminate\Support\Collection
      */
-    public static function getWidgetsByType(array $types = null)
+    public function getWidgetsByType(array $types = null)
     {
         $widgets = new Widget;
 
@@ -26,7 +26,7 @@ class WidgetManagerDatabase extends WidgetManager
     /**
      * @return \Illuminate\Support\Collection
      */
-    public static function getAllWidgets()
+    public function getAllWidgets()
     {
         $widgets = Widget::all();
 
@@ -38,7 +38,7 @@ class WidgetManagerDatabase extends WidgetManager
      *
      * @return \Illuminate\Support\Collection
      */
-    public static function getWidgetsByPage($pageId)
+    public function getWidgetsByPage($pageId)
     {
         $widgets = Widget::whereHas('pages', function ($q) use ($pageId) {
             $q->where('pages.id', (int) $pageId);
@@ -53,7 +53,7 @@ class WidgetManagerDatabase extends WidgetManager
      *
      * @return array
      */
-    public static function getPageWidgetBlocks($pageId)
+    public function getPageWidgetBlocks($pageId)
     {
         $query = DB::table('page_widgets')->where('page_id', $pageId)->get();
 
@@ -70,7 +70,7 @@ class WidgetManagerDatabase extends WidgetManager
      *
      * @return \KodiCMS\Widgets\Contracts\Widget
      */
-    public static function getWidgetById($id)
+    public function getWidgetById($id)
     {
         return Widget::find($id)->toWidget();
     }
@@ -99,7 +99,7 @@ class WidgetManagerDatabase extends WidgetManager
      *    ]
      * ]
      */
-    public static function getWidgetLocationById($id)
+    public function getWidgetLocationById($id)
     {
         $query = DB::table('page_widgets');
 
@@ -121,7 +121,7 @@ class WidgetManagerDatabase extends WidgetManager
      * @param int $formPageId
      * @param int $toPageId
      */
-    public static function copyWidgets($formPageId, $toPageId)
+    public function copyWidgets($formPageId, $toPageId)
     {
         intval($toPageId);
         intval($formPageId);
@@ -142,7 +142,7 @@ class WidgetManagerDatabase extends WidgetManager
      * @param array   $locations [(int) {pageId} => ['block' => (string) '...', 'position' => (int) '...', 'set_crumbs'
      *                           => (bool) '...']]
      */
-    public static function placeWidgetsOnPages($widgetId, array $locations)
+    public function placeWidgetsOnPages($widgetId, array $locations)
     {
         DB::table('page_widgets')->where('widget_id', (int) $widgetId)->delete();
 
@@ -171,7 +171,7 @@ class WidgetManagerDatabase extends WidgetManager
      * @param int   $pageId
      * @param array $location ['block' => (string) '...', 'position' => (int) '...', 'set_crumbs' => (bool) '...']
      */
-    public static function updateWidgetOnPage($widgetId, $pageId, array $location)
+    public function updateWidgetOnPage($widgetId, $pageId, array $location)
     {
         $query = DB::table('page_widgets')->where('widget_id', (int) $widgetId)->where('page_id', (int) $pageId);
 
@@ -191,7 +191,7 @@ class WidgetManagerDatabase extends WidgetManager
      *
      * @return int
      */
-    public static function deleteWidgetsFromPage($pageId)
+    public function deleteWidgetsFromPage($pageId)
     {
         return DB::table('page_widgets')->where('page_id', (int) $pageId)->delete();
     }

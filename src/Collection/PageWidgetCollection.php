@@ -4,17 +4,25 @@ namespace KodiCMS\Widgets\Collection;
 
 use Meta;
 use KodiCMS\Widgets\Contracts\WidgetRenderable;
-use KodiCMS\Widgets\Manager\WidgetManagerDatabase;
+use KodiCMS\Widgets\Contracts\WidgetManager as WidgetManagerInterface;
 
 class PageWidgetCollection extends WidgetCollection
 {
     /**
-     * @param int $pageId
+     * @var WidgetManagerInterface
      */
-    public function __construct($pageId)
+    private $widgetManager;
+
+    /**
+     * @param WidgetManagerInterface $widgetManager
+     * @param int                    $pageId
+     */
+    public function __construct(WidgetManagerInterface $widgetManager, $pageId)
     {
-        $widgets = WidgetManagerDatabase::getWidgetsByPage($pageId);
-        $blocks = WidgetManagerDatabase::getPageWidgetBlocks($pageId);
+        $this->widgetManager = $widgetManager;
+
+        $widgets = $widgetManager->getWidgetsByPage($pageId);
+        $blocks = $widgetManager->getPageWidgetBlocks($pageId);
 
         foreach ($widgets as $widget) {
             $this->addWidget(
