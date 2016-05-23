@@ -4,16 +4,14 @@ namespace KodiCMS\Widgets\Providers;
 
 use PackageManager;
 use KodiCMS\Pages\Helpers\Block;
-use KodiCMS\Users\Model\UserRole;
+use KodiCMS\Users\Model\Role;
 use KodiCMS\Widgets\Model\Widget;
-use KodiCMS\Widgets\Manager\WidgetManager;
 use KodiCMS\Widgets\Model\SnippetCollection;
 use KodiCMS\Widgets\Contracts\WidgetPaginator;
 use KodiCMS\Widgets\Collection\PageWidgetCollection;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as BaseEventServiceProvider;
 use KodiCMS\Widgets\Observers\WidgetObserver;
-use KodiCMS\Widgets\Manager\WidgetManagerDatabase;
 use Request;
 use KodiCMS\Pages\Model\Page;
 
@@ -74,7 +72,7 @@ class EventsServiceProvider extends BaseEventServiceProvider
             }
 
             if (acl_check('widgets.roles') and ! $widget->isHandler()) {
-                $usersRoles = UserRole::lists('name', 'id')->all();
+                $usersRoles = Role::pluck('name', 'id')->all();
                 echo view('widgets::widgets.partials.permissions', compact('widget', 'usersRoles'))->render();
             }
         });

@@ -81,7 +81,9 @@
 				</td>
 				<td class="template">
 					@if ($widget->isRenderable())
-					<span class="editable-template label label-info" data-value="{{ $widget->template or null }}">{{ $widget->template }}</span>
+					<span class="editable-template label label-info" data-value="{{ $widget->template or null }}">
+						{{ $widget->template }}
+					</span>
 					@endif
 				</td>
 				<td class="cache">

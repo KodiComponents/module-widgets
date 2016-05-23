@@ -1,5 +1,4 @@
-@section('scripts')
-	@parent
+@push('scripts')
 <script type="text/javascript">
 $(function() {
 	var editSnippetUrl = '{{ route('backend.snippet.edit', ['***']) }}';
@@ -31,7 +30,7 @@ function update_snippets_list(e, response) {
 		.change();
 }
 </script>
-@stop
+@endpush
 
 <?php
 if (empty($templates))

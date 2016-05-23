@@ -1,8 +1,6 @@
-@section('page-content')
-	@parent
-
+@push('page-content')
 <div class="panel-heading panel-toggler" data-hotkeys="shift+w">
-	<span class="panel-title" data-icon="cubes">@lang('widgets::core.title.list')</h4>
+	<span class="panel-title" data-icon="cubes">@lang('widgets::core.title.list')</span>
 </div>
 <div class="panel-body panel-spoiler">
 	@if (is_null($page->id))
@@ -45,8 +43,8 @@
 	</table>
 	@endif
 </div>
-@stop
+@endpush
 
-@section('scripts')
+@push('scripts')
 <script src="/backend/cms/js/WidgetController.js"></script>
-@stop
+@endpush

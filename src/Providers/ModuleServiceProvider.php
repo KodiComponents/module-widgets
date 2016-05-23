@@ -17,6 +17,8 @@ class ModuleServiceProvider extends ServiceProvider
         $this->app->alias('widget.manager', WidgetManager::class);
 
         $this->app['view']->addNamespace('snippets', snippets_path());
+
+        $this->registerNavigation();
     }
 
     public function register()
@@ -25,5 +27,29 @@ class ModuleServiceProvider extends ServiceProvider
             BladeServiceProvider::class,
             EventsServiceProvider::class,
         ]);
+    }
+
+    private function registerNavigation()
+    {
+        if ($navigation = \Navigation::getPages()->findById('design')) {
+            $navigation->setFromArray([
+                [
+                    'id' => 'snippets',
+                    'title' => 'widgets::snippet.title.list',
+                    'url' => route('backend.snippet.list'),
+                    'permissions' => 'snippet.index',
+                    'priority' => 200,
+                    'icon' => 'cutlery',
+                ],
+                [
+                    'id' => 'widgets',
+                    'title' => 'widgets::core.title.list',
+                    'url' => route('backend.widget.list'),
+                    'permissions' => 'widgets.index',
+                    'priority' => 300,
+                    'icon' => 'cubes',
+                ],
+            ]);
+        }
     }
 }
