@@ -26,11 +26,11 @@ class EventsServiceProvider extends BaseEventServiceProvider
      */
     public function boot(DispatcherContract $events)
     {
-        $events->listen('frontend.found', function ($page) {
-            $this->app->singleton('layout.widgets', function ($app) use ($page) {
+        $events->listen('KodiCMS\Pages\Events\FrontPageFound', function ($event) {
+            $this->app->singleton('layout.widgets', function ($app) use ($event) {
                 return new PageWidgetCollection(
                     $app['widget.manager'],
-                    $page->getId()
+                    $event->getPage()->getId()
                 );
             });
 
