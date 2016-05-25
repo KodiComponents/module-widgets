@@ -24,6 +24,7 @@
     },
     "require": {
         "kodicms/module-loader": "3.*",
-        "kodicms/pages": "*"
+        "kodicms/pages": "0.*",
+        "kodicms/core": "0.*"
     }
 }
