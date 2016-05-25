@@ -17,8 +17,6 @@ class ModuleServiceProvider extends ServiceProvider
         $this->app->alias('widget.manager', WidgetManager::class);
 
         $this->app['view']->addNamespace('snippets', snippets_path());
-
-        $this->registerNavigation();
     }
 
     public function register()
@@ -29,7 +27,7 @@ class ModuleServiceProvider extends ServiceProvider
         ]);
     }
 
-    private function registerNavigation()
+    public function contextBackend()
     {
         if ($navigation = \Navigation::getPages()->findById('design')) {
             $navigation->setFromArray([
