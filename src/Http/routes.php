@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['prefix' => backend_url_segment(), 'as' => 'backend.', 'middleware' => ['web', 'backend.auth']], function () {
+Route::group(['prefix' => backend_url_segment(), 'as' => 'backend.', 'middleware' => ['backend']], function () {
     Route::get('snippets', ['as' => 'snippet.list', 'uses' => 'SnippetController@getIndex']);
     Route::get('snippet/create', ['as' => 'snippet.create', 'uses' => 'SnippetController@getCreate']);
     Route::post('snippet/create', ['as' => 'snippet.create.post', 'uses' => 'SnippetController@postCreate']);
@@ -21,7 +21,7 @@ Route::group(['prefix' => backend_url_segment(), 'as' => 'backend.', 'middleware
     Route::get('widget/{type}', ['as' => 'widget.list.by_type', 'uses' => 'WidgetController@getIndex']);
 });
 
-Route::group(['as' => 'api.', 'middleware' => ['web', 'api', 'backend.auth']], function () {
+Route::group(['as' => 'api.', 'middleware' => ['api', 'backend']], function () {
     RouteAPI::put('widget', ['as' => 'widget.place', 'uses' => 'API\WidgetController@putPlace']);
     RouteAPI::post('widget.set.template', [
         'as'   => 'widget.set.template',
