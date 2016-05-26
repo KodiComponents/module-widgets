@@ -3,6 +3,7 @@
 namespace KodiCMS\Widgets\Repository;
 
 use DB;
+use Illuminate\Http\Request;
 use KodiCMS\Widgets\Model\Widget;
 use KodiCMS\CMS\Repository\BaseRepository;
 
@@ -17,34 +18,25 @@ class WidgetRepository extends BaseRepository
     }
 
     /**
-     * @param array $data
-     *
-     * @return bool
-     * @throws \KodiCMS\CMS\Exceptions\ValidationException
+     * @param Request $request
      */
-    public function validateOnCreate(array $data = [])
+    public function validateOnCreate(Request $request)
     {
-        $validator = $this->validator($data, [
+        $this->validate($request, [
             'name' => 'required|max:255',
             'type' => 'required',
         ]);
-
-        return $this->_validate($validator);
     }
 
     /**
-     * @param array $data
-     *
-     * @return bool
-     * @throws \KodiCMS\CMS\Exceptions\ValidationException
+     * @param int     $id
+     * @param Request $request
      */
-    public function validateOnUpdate(array $data = [])
+    public function validateOnUpdate($id, Request $request)
     {
-        $validator = $this->validator($data, [
+        $this->validate($request, [
             'name' => 'required|max:255',
         ]);
-
-        return $this->_validate($validator);
     }
 
     /**

@@ -25,7 +25,7 @@ class WidgetController extends BackendController
     {
         Meta::loadPackage('editable');
 
-        $query = $repository->getModel()->newQuery();
+        $query = $repository->query();
 
         $widgetTypeLinks = [
             link_to_route(
@@ -91,10 +91,8 @@ class WidgetController extends BackendController
      */
     public function postCreate(WidgetRepository $repository)
     {
-        $data = $this->request->all();
-
-        $repository->validateOnCreate($data);
-        $widget = $repository->create($data);
+        $repository->validateOnCreate($this->request);
+        $widget = $repository->create($this->request->all());
 
         return $this->smartRedirect([$widget])
             ->with('success', trans($this->wrapNamespace('core.messages.created'), [
@@ -127,10 +125,8 @@ class WidgetController extends BackendController
      */
     public function postEdit(WidgetRepository $repository, $id)
     {
-        $data = $this->request->all();
-
-        $repository->validateOnUpdate($data);
-        $widget = $repository->update($id, $data);
+        $repository->validateOnUpdate($id, $this->request);
+        $widget = $repository->update($id, $this->request->all());
 
         return $this->smartRedirect([$widget])
             ->with('success', trans($this->wrapNamespace('core.messages.updated'), [
