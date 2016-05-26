@@ -2,10 +2,9 @@
 
 namespace KodiCMS\Widgets\Http\Controllers;
 
-use KodiCMS\CMS\Exceptions\ValidationException;
+use KodiCMS\CMS\Http\Controllers\System\Controller;
 use KodiCMS\Widgets\Exceptions\WidgetException;
 use KodiCMS\Widgets\Repository\WidgetRepository;
-use KodiCMS\CMS\Http\Controllers\System\Controller;
 
 class HandlerController extends Controller
 {

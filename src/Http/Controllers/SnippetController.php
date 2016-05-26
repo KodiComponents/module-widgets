@@ -3,6 +3,7 @@
 namespace KodiCMS\Widgets\Http\Controllers;
 
 use KodiCMS\CMS\Http\Controllers\AbstractFileController;
+use KodiCMS\Pages\Model\LayoutCollection;
 use KodiCMS\Widgets\Model\SnippetCollection;
 
 class SnippetController extends AbstractFileController
