@@ -3,6 +3,8 @@
 namespace KodiCMS\Widgets\Http\Controllers;
 
 use KodiCMS\Widgets\Contracts\WidgetManager;
+use KodiCMS\Widgets\Http\Forms\CreateWidgetForm;
+use KodiCMS\Widgets\Http\Forms\UpdateWidgetForm;
 use Meta;
 use WYSIWYG;
 use Illuminate\View\View;
@@ -85,14 +87,13 @@ class WidgetController extends BackendController
     }
 
     /**
-     * @param WidgetRepository $repository
+     * @param CreateWidgetForm $widgetForm
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreate(WidgetRepository $repository)
+    public function postCreate(CreateWidgetForm $widgetForm)
     {
-        $repository->validateOnCreate($this->request);
-        $widget = $repository->create($this->request->all());
+        $widget = $widgetForm->save();
 
         return $this->smartRedirect([$widget])
             ->with('success', trans($this->wrapNamespace('core.messages.created'), [
@@ -118,15 +119,14 @@ class WidgetController extends BackendController
     }
 
     /**
-     * @param WidgetRepository $repository
-     * @param int          $id
+     * @param UpdateWidgetForm $widgetForm
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postEdit(WidgetRepository $repository, $id)
+    public function postEdit(UpdateWidgetForm $widgetForm, $id)
     {
-        $repository->validateOnUpdate($id, $this->request);
-        $widget = $repository->update($id, $this->request->all());
+        $widget = $widgetForm->save();
 
         return $this->smartRedirect([$widget])
             ->with('success', trans($this->wrapNamespace('core.messages.updated'), [

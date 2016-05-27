@@ -18,28 +18,6 @@ class WidgetRepository extends BaseRepository
     }
 
     /**
-     * @param Request $request
-     */
-    public function validateOnCreate(Request $request)
-    {
-        $this->validate($request, [
-            'name' => 'required|max:255',
-            'type' => 'required',
-        ]);
-    }
-
-    /**
-     * @param int     $id
-     * @param Request $request
-     */
-    public function validateOnUpdate($id, Request $request)
-    {
-        $this->validate($request, [
-            'name' => 'required|max:255',
-        ]);
-    }
-
-    /**
      * @param int   $id
      * @param array $data
      *
