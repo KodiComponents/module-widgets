@@ -45,8 +45,8 @@ class EventsServiceProvider extends BaseEventServiceProvider
         });
 
         $events->listen('view.page.edit', function ($page) {
-            if (acl_check('widgets.index') and $page->hasLayout()) {
-                echo view('widgets::widgets.page.iframe')->with('page', $page)->render();
+            if (acl_check('widgets::list') and $page->hasLayout()) {
+                echo view('widgets::widgets.page.iframe', compact('page'))->render();
             }
         });
 
@@ -58,7 +58,7 @@ class EventsServiceProvider extends BaseEventServiceProvider
                 echo view('widgets::widgets.partials.renderable', compact('widget', 'commentKeys', 'snippets'))->render();
             }
 
-            if ($widget->isCacheable() and acl_check('widgets.cache')) {
+            if ($widget->isCacheable() and acl_check('widget_settings::cache')) {
                 echo view('widgets::widgets.partials.cacheable', compact('widget'))->render();
             }
         });
@@ -71,7 +71,7 @@ class EventsServiceProvider extends BaseEventServiceProvider
                 echo view('widgets::widgets.partials.renderable_buttons', compact('widget', 'commentKeys', 'snippets', 'assetsPackages', 'widgetList'))->render();
             }
 
-            if (acl_check('widgets.roles') and ! $widget->isHandler()) {
+            if (acl_check('widget_settings::roles') and ! $widget->isHandler()) {
                 $usersRoles = Role::pluck('name', 'id')->all();
                 echo view('widgets::widgets.partials.permissions', compact('widget', 'usersRoles'))->render();
             }

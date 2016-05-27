@@ -45,7 +45,7 @@
 <hr class="no-margin-vr" />
 
 <div class="panel-body">
-	@if (acl_check('widgets.location') and !$widget->isHandler())
+	@if (acl_check('widget_settings::location') and !$widget->isHandler())
 		{!! link_to_route('backend.widget.location', trans('widgets::core.button.location'), [$widget], [
 			'data-icon' => 'sitemap', 'class' => 'btn btn-sm btn-primary btn-labeled'
 		]) !!}

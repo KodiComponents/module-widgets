@@ -13,13 +13,13 @@
 	</select>
 	@else
 
-	@if (acl_check('widgets.location'))
+	@if (acl_check('widget_settings::location'))
 
 	<a class="btn btn-success fancybox.ajax popup" href="{{ route('backend.widget.popup_list', [$page->id]) }}" id="addWidgetToPage" data-icon="plus">
 		@lang('widgets::core.button.add_to_page')
 	</a>
 
-	@if (acl_check('layout.rebuild'))
+	@if (acl_check('layout::rebuild'))
 		{!! Form::button(trans('pages::layout.button.rebuild'), [
 			'data-icon' => 'refresh',
 			'class' => 'btn btn-inverse btn-xs',

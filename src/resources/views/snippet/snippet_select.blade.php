@@ -60,14 +60,14 @@ $hidden = empty($template) ? 'hidden' : '';
 				]) !!}
 
 				<div class="btn-group">
-					@if (acl_check('snippet.edit'))
+					@if (acl_check('snippet::edit'))
 					{!! link_to_route('backend.snippet.edit', '', [$template], [
 						'data-icon' => 'edit', 'class' => 'btn popup btn-primary '.$hidden,
 						'id' => 'EditTemplateButton'
 					]) !!}
 					@endif
 
-					@if (acl_check('snippet.add'))
+					@if (acl_check('snippet::add'))
 					{!! link_to_route('backend.snippet.create', '', [], [
 						'data-icon' => 'plus', 'class' => 'btn popup btn-success',
 						'id' => 'AddTemplateButton'

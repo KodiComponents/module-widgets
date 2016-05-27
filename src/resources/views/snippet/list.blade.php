@@ -1,7 +1,7 @@
 <div class="panel">
 	@if (!$collection->isReadOnly())
 		<div class="panel-heading">
-			@if (acl_check('snippet.add'))
+			@if (acl_check('snippet::add'))
 				{!! link_to_route('backend.snippet.create', trans('widgets::snippet.button.add'), [], [
 				'class' => 'btn btn-default btn-labeled', 'data-icon' => 'plus', 'data-hotkeys' => 'ctrl+a'
 				]) !!}
@@ -40,11 +40,12 @@
 					<span class="label label-warning">@lang('widgets::snippet.label.readonly')</span>
 				@endif
 
-				@if (acl_check('snippet.edit') or acl_check('snippet.view'))
+				@if (acl_check('snippet::edit') or acl_check('snippet::view'))
 				{!! link_to_route('backend.snippet.edit', $snippet->getName(), [$snippet->getName()], [
 					'class' => $snippet->isReadOnly() ? 'popup' : ''
 				]) !!}
 				@else
+					{{ $snippet->getName() }}
 				@endif
 			</th>
 			<td class="modified hidden-xs">
@@ -57,7 +58,7 @@
 				{!! UI::label($snippet->getRelativePath()) !!}
 			</td>
 			<td class="actions text-right">
-				@if (acl_check('snippet.delete'))
+				@if (acl_check('snippet::delete'))
 				{!! Form::open(['route' => ['backend.snippet.delete', $snippet->getName()]]) !!}
 					{!! Form::button('', [
 						'type' => 'submit',

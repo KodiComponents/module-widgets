@@ -32,7 +32,7 @@
 				</div>
 			</div>
 
-			@if (acl_check('layout.rebuild'))
+			@if (acl_check('layout::rebuild'))
 			{!! Form::button(trans('widgets::core.button.rebuild_blocks'), [
 				'data-icon' => 'refresh',
 				'class' => 'btn btn-xs btn-info btn-labeled',
@@ -88,7 +88,7 @@ function recurse_pages($pages, $spaces = 0, $layoutsBlocks = [], $pageWidgets = 
 		$data .= Form::text('blocks[' . $page['id'] . '][position]', (int) $currentPosition, ['maxlength' => 4, 'size' => 4, 'class' => 'form-control text-right widget-position']);
 		$data .= '</td><td></td>';
 
-		if (acl_check('page.edit'))
+		if (acl_check('page::edit'))
 		{
 			$data .= '<th>' . str_repeat("-&nbsp;", $spaces) . link_to_route('backend.page.edit', $page['title'], [$page['id']]) . '</th>';
 		}

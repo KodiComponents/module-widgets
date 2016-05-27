@@ -3,6 +3,7 @@
 namespace KodiCMS\Widgets\Providers;
 
 use KodiCMS\Support\ServiceProvider;
+use KodiCMS\Users\Model\Permission;
 use KodiCMS\Widgets\Contracts\WidgetManager;
 use KodiCMS\Widgets\Manager\WidgetManagerDatabase;
 
@@ -15,7 +16,6 @@ class ModuleServiceProvider extends ServiceProvider
         });
 
         $this->app->alias('widget.manager', WidgetManager::class);
-
         $this->app['view']->addNamespace('snippets', snippets_path());
     }
 
@@ -24,6 +24,27 @@ class ModuleServiceProvider extends ServiceProvider
         $this->registerProviders([
             BladeServiceProvider::class,
             EventsServiceProvider::class,
+        ]);
+
+        Permission::register('widgets', 'widget', [
+            'list',
+            'add',
+            'delete',
+            'edit',
+        ]);
+
+        Permission::register('widgets', 'widget_settings', [
+            'cache',
+            'roles',
+            'location',
+        ]);
+
+        Permission::register('widgets', 'snippet', [
+            'add',
+            'edit',
+            'list',
+            'view',
+            'delete'
         ]);
     }
 
@@ -35,7 +56,7 @@ class ModuleServiceProvider extends ServiceProvider
                     'id' => 'snippets',
                     'title' => 'widgets::snippet.title.list',
                     'url' => route('backend.snippet.list'),
-                    'permissions' => 'snippet.index',
+                    'permissions' => 'snippet::list',
                     'priority' => 200,
                     'icon' => 'cutlery',
                 ],
@@ -43,7 +64,7 @@ class ModuleServiceProvider extends ServiceProvider
                     'id' => 'widgets',
                     'title' => 'widgets::core.title.list',
                     'url' => route('backend.widget.list'),
-                    'permissions' => 'widgets.index',
+                    'permissions' => 'widget::list',
                     'priority' => 300,
                     'icon' => 'cubes',
                 ],

@@ -11,7 +11,7 @@
 		</div>
 	</div>
 </div>
-@if (!$snippet->isReadOnly() or $snippet->isNew())
+@if ((!$snippet->isReadOnly() or $snippet->isNew()) and acl_check('snippet::edit'))
 <div class="panel-toggler text-center panel-heading" data-target-spoiler=".spoiler-settings">
 	{!! UI::icon('chevron-down panel-toggler-icon') !!} <span class="muted">@lang('widgets::snippet.label.settings')</span>
 </div>
@@ -61,7 +61,7 @@
 	<div class="panel-default alert alert-danger alert-dark no-margin-b">
 		@lang('widgets::snippet.messages.snippet_not_writeable')
 	</div>
-@elseif (acl_check('snippet.edit'))
+@elseif (acl_check('snippet::edit'))
 	<div class="form-actions panel-footer">
 		@include('cms::app.partials.actionButtons', ['route' => 'backend.snippet.list'])
 	</div>

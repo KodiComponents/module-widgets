@@ -44,7 +44,7 @@
 					@lang('widgets::core.messages.corrupted')
 				</td>
 				<td class="actions text-right">
-					@if (acl_check('widgets.delete'))
+					@if (acl_check('widget::delete'))
 					{!! link_to_route('backend.widget.delete', '', [$widget], [
 					'data-icon' => 'times fa-inverse', 'class' => 'btn btn-xs btn-confirm'
 					]) !!}
@@ -52,7 +52,7 @@
 				</td>
 				@else
 				<th class="name" data-icon="cube">
-					@if (acl_check('widgets.edit'))
+					@if (acl_check('widget::edit'))
 					{!! link_to_route('backend.widget.edit', $widget->name, [$widget]) !!}
 					@else
 					{{ $widget->name }}
@@ -96,12 +96,12 @@
 				@endif
 				</td>
 				<td class="actions text-right">
-					@if (acl_check('widgets.location') and !$widget->isHandler())
+					@if (acl_check('widget_settings::location') and !$widget->isHandler())
 					{!! link_to_route('backend.widget.location', '', [$widget], [
 						'data-icon' => 'sitemap', 'class' => 'btn btn-xs btn-primary popup'
 					]) !!}
 					@endif
-					@if (acl_check('widgets.delete'))
+					@if (acl_check('widget::delete'))
 					{!! Form::open(['route' => ['backend.widget.delete', $widget], 'style' => 'display: inline-block']) !!}
 						{!! Form::button('', [
 							'type' => 'submit',
