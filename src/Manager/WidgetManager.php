@@ -4,14 +4,57 @@ namespace KodiCMS\Widgets\Manager;
 
 use Illuminate\Support\Collection;
 use KodiCMS\Widgets\Contracts\Widget;
+use KodiCMS\Widgets\Contracts\WidgetCacheable;
 use KodiCMS\Widgets\Contracts\WidgetCorrupt;
 use KodiCMS\Widgets\Contracts\WidgetHandler;
-use KodiCMS\Widgets\Contracts\WidgetCacheable;
-use KodiCMS\Widgets\Contracts\WidgetRenderable;
 use KodiCMS\Widgets\Contracts\WidgetManager as WidgetManagerInterface;
+use KodiCMS\Widgets\Contracts\WidgetRenderable;
+use KodiCMS\Widgets\WidgetType;
 
 abstract class WidgetManager implements WidgetManagerInterface
 {
+
+    /**
+     * @var Collection
+     */
+    protected $types;
+
+    /**
+     * WidgetManagerDashboard constructor.
+     *
+     * @param WidgetType[] $types
+     */
+    public function __construct(array $types = [])
+    {
+        $this->types = new Collection();
+
+        foreach ($types as $type) {
+            $this->registerWidget($type);
+        }
+    }
+
+    /**
+     * @param \KodiCMS\Widgets\Contracts\WidgetType $type
+     *
+     * @return $this
+     */
+    public function registerWidget(\KodiCMS\Widgets\Contracts\WidgetType $type)
+    {
+        if (! $this->isCorrupt($type->getClass())) {
+            $this->types->put($type->getType(), $type);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAvailableTypes()
+    {
+        return $this->types;
+    }
+    
     /**
      * Проверка переданного класса на существоавние.
      *
@@ -87,25 +130,6 @@ abstract class WidgetManager implements WidgetManagerInterface
     }
 
     /**
-     * @return array
-     */
-    public function getAvailableTypes()
-    {
-        $types = [];
-        foreach (config('widgets', []) as $group => $widgets) {
-            foreach ($widgets as $type => $widget) {
-                if (! isset($widget['class']) or $this->isCorrupt($widget['class'])) {
-                    continue;
-                }
-
-                $types[$group][$type] = array_get($widget, 'title', snake_case($type));
-            }
-        }
-
-        return $types;
-    }
-
-    /**
      * @param string $needleType
      *
      * @return array
@@ -147,19 +171,13 @@ abstract class WidgetManager implements WidgetManagerInterface
      */
     public function getClassNameByType($needleType)
     {
-        foreach (config('widgets', []) as $group => $widgets) {
-            foreach ($widgets as $type => $widget) {
-                if (! isset($widget['class']) or $this->isCorrupt($widget['class'])) {
-                    continue;
-                }
+        $type = $this->types->filter(function (\KodiCMS\Widgets\Contracts\WidgetType $type) use ($needleType) {
+            return $type->getType() == $needleType or $this->isCorrupt($type->getClass());
+        })->first();
 
-                if ($type == $needleType) {
-                    return $widget['class'];
-                }
-            }
+        if ($type) {
+            return $type->getClass();
         }
-
-        return;
     }
 
     /**
@@ -169,18 +187,13 @@ abstract class WidgetManager implements WidgetManagerInterface
      */
     public function getTypeByClassName($needleClass)
     {
-        foreach (config('widgets', []) as $group => $widgets) {
-            foreach ($widgets as $type => $widget) {
-                if (! isset($widget['class']) or $this->isCorrupt($widget['class'])) {
-                    continue;
-                }
-                if (strpos($widget['class'], $needleClass) !== false) {
-                    return $type;
-                }
-            }
-        }
+        $type = $this->types->filter(function (\KodiCMS\Widgets\Contracts\WidgetType $type) use ($needleClass) {
+            return $type->getClass() == $needleClass or $this->isCorrupt($type->getClass());
+        })->first();
 
-        return;
+        if ($type) {
+            return $type->getType();
+        }
     }
 
     /**

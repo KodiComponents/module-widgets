@@ -2,10 +2,12 @@
 
 namespace KodiCMS\Widgets\Contracts;
 
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
 use KodiCMS\CMS\Contracts\SettingsInterface;
 use KodiCMS\Widgets\Exceptions\WidgetException;
 
-interface Widget extends SettingsInterface
+interface Widget extends SettingsInterface, Arrayable, Jsonable
 {
     /**
      * @return int

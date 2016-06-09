@@ -285,4 +285,14 @@ abstract class WidgetAbstract implements WidgetInterface
             'parameters'  => $this->getParameters(),
         ];
     }
+
+    /**
+     * @param int $options
+     *
+     * @return string
+     */
+    public function toJson($options = 0)
+    {
+        return json_encode($this->toArray(), $options);
+    }
 }

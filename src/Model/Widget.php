@@ -9,9 +9,12 @@ use KodiCMS\Widgets\Contracts\WidgetManager;
 use KodiCMS\Widgets\Widget\Temp as TempWidget;
 use KodiCMS\Widgets\Exceptions\WidgetException;
 use KodiCMS\Widgets\Manager\WidgetManagerDatabase;
+use KodiComponents\Support\Filterable;
 
 class Widget extends Model
 {
+    use Filterable;
+
     /**
      * @var array
      */
@@ -61,9 +64,11 @@ class Widget extends Model
      */
     public function getType()
     {
-        foreach (app('widget.manager')->getAvailableTypes() as $group => $types) {
-            if (isset($types[$this->type])) {
-                return $types[$this->type];
+        $types = app('widget.manager')->getAvailableTypes();
+
+        foreach ($types as $type) {
+            if ($type->getType() == $this->type) {
+                return $type->getTitle();
             }
         }
 

@@ -6,46 +6,30 @@ use KodiCMS\Support\ServiceProvider;
 use KodiCMS\Users\Model\Permission;
 use KodiCMS\Widgets\Contracts\WidgetManager;
 use KodiCMS\Widgets\Manager\WidgetManagerDatabase;
+use KodiCMS\Widgets\WidgetType;
 
 class ModuleServiceProvider extends ServiceProvider
 {
     public function boot()
+    {
+        $this->registerWidgets();
+        $this->app['view']->addNamespace('snippets', snippets_path());
+    }
+
+    public function register()
     {
         $this->app->singleton('widget.manager', function () {
             return new WidgetManagerDatabase();
         });
 
         $this->app->alias('widget.manager', WidgetManager::class);
-        $this->app['view']->addNamespace('snippets', snippets_path());
-    }
 
-    public function register()
-    {
         $this->registerProviders([
             BladeServiceProvider::class,
             EventsServiceProvider::class,
         ]);
 
-        Permission::register('widgets', 'widget', [
-            'list',
-            'add',
-            'delete',
-            'edit',
-        ]);
-
-        Permission::register('widgets', 'widget_settings', [
-            'cache',
-            'roles',
-            'location',
-        ]);
-
-        Permission::register('widgets', 'snippet', [
-            'add',
-            'edit',
-            'list',
-            'view',
-            'delete'
-        ]);
+        $this->registerPermissions();
     }
 
     public function contextBackend()
@@ -70,5 +54,37 @@ class ModuleServiceProvider extends ServiceProvider
                 ],
             ]);
         }
+    }
+
+    private function registerWidgets()
+    {
+        $this->app['widget.manager']
+            ->registerWidget(new WidgetType('html', 'widgets::types.html', 'KodiCMS\Widgets\Widget\HTML'))
+            ->registerWidget(new WidgetType('handler', 'widgets::types.handler', 'KodiCMS\Widgets\Widget\Handler'))
+            ->registerWidget(new WidgetType('paginator', 'widgets::types.paginator.title', 'KodiCMS\Widgets\Widget\Paginator'));
+    }
+
+    private function registerPermissions()
+    {
+        Permission::register('widgets', 'widget', [
+            'list',
+            'add',
+            'delete',
+            'edit',
+        ]);
+
+        Permission::register('widgets', 'widget_settings', [
+            'cache',
+            'roles',
+            'location',
+        ]);
+
+        Permission::register('widgets', 'snippet', [
+            'add',
+            'edit',
+            'list',
+            'view',
+            'delete'
+        ]);
     }
 }

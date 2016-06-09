@@ -2,32 +2,34 @@
 
 namespace KodiCMS\Widgets\Http\Controllers;
 
-use KodiCMS\Widgets\Contracts\WidgetManager;
-use KodiCMS\Widgets\Http\Forms\CreateWidgetForm;
-use KodiCMS\Widgets\Http\Forms\UpdateWidgetForm;
-use Meta;
-use WYSIWYG;
 use Illuminate\View\View;
+use KodiCMS\CMS\Http\Controllers\System\BackendController;
 use KodiCMS\Pages\Model\LayoutBlock;
 use KodiCMS\Pages\Repository\PageRepository;
-use KodiCMS\Widgets\Repository\WidgetRepository;
-use KodiCMS\Widgets\Manager\WidgetManagerDatabase;
+use KodiCMS\Widgets\Contracts\WidgetManager;
+use KodiCMS\Widgets\Contracts\WidgetType;
 use KodiCMS\Widgets\Engine\WidgetRenderSettingsHTML;
-use KodiCMS\CMS\Http\Controllers\System\BackendController;
+use KodiCMS\Widgets\Http\Filters\WidgetFilters;
+use KodiCMS\Widgets\Http\Forms\CreateWidgetForm;
+use KodiCMS\Widgets\Http\Forms\UpdateWidgetForm;
+use KodiCMS\Widgets\Repository\WidgetRepository;
+use Meta;
+use WYSIWYG;
 
 class WidgetController extends BackendController
 {
 
     /**
+     * @param WidgetFilters    $filters
      * @param WidgetManager    $widgetManager
      * @param WidgetRepository $repository
      * @param string           $type
      */
-    public function getIndex(WidgetManager $widgetManager, WidgetRepository $repository, $type = null)
+    public function getIndex(WidgetFilters $filters, WidgetManager $widgetManager, WidgetRepository $repository, $type = null)
     {
         Meta::loadPackage('editable');
 
-        $query = $repository->query();
+        $this->request->offsetSet('type', $type);
 
         $widgetTypeLinks = [
             link_to_route(
@@ -37,25 +39,19 @@ class WidgetController extends BackendController
             )
         ];
 
-        foreach ($widgetManager->getAvailableTypes() as $group => $types) {
-            if (isset($types[$type])) {
-                $this->breadcrumbs->add($types[$type]);
+        $widgetManager->getAvailableTypes()->each(function (WidgetType $widgetType) use ($type, &$widgetTypeLinks) {
+            if ($widgetType->getType() == $type) {
+                $this->breadcrumbs->add($widgetType->getTitle());
             }
 
-            foreach($types as $key => $title) {
-                $widgetTypeLinks[] = link_to_route(
-                    'backend.widget.list.by_type',
-                    \UI::label($title, $key == $type ? 'primary' : 'default'),
-                    [$key]
-                );
-            }
-        }
+            $widgetTypeLinks[] = link_to_route(
+                'backend.widget.list.by_type',
+                \UI::label($widgetType->getTitle(), $widgetType->getType() == $type ? 'primary' : 'default'),
+                [$widgetType->getType()]
+            );
+        });
 
-        if (! is_null($type)) {
-            $query->where('type', $type);
-        }
-
-        $widgets = $query->paginate();
+        $widgets = $repository->query()->filter($filters)->paginate();
 
         $this->setContent('widgets.list', compact('widgets', 'type', 'widgetTypeLinks'));
     }
@@ -81,7 +77,11 @@ class WidgetController extends BackendController
     {
         $this->setTitle(trans($this->wrapNamespace('core.title.create')));
 
-        $types = $widgetManager->getAvailableTypes();
+        $types = $widgetManager->getAvailableTypes()->map(function($type) {
+            return $type->toArray();
+        })->groupBy('group')->map(function ($group) {
+            return $group->pluck('title', 'type');
+        })->toArray();
 
         $this->setContent('widgets.create', compact('types', 'type'));
     }

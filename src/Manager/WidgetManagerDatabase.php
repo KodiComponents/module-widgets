@@ -7,6 +7,7 @@ use KodiCMS\Widgets\Model\Widget;
 
 class WidgetManagerDatabase extends WidgetManager
 {
+
     /**
      * @param array $types
      *
@@ -42,7 +43,6 @@ class WidgetManagerDatabase extends WidgetManager
     {
         $widgets = Widget::whereHas('pages', function ($q) use ($pageId) {
             $q->where('pages.id', (int) $pageId);
-
         })->with('related')->get();
 
         return static::buildWidgetCollection($widgets);
@@ -127,10 +127,10 @@ class WidgetManagerDatabase extends WidgetManager
         intval($formPageId);
 
         $subSelect = DB::table('page_widgets as pw1')->selectRaw("'$toPageId' as page_id, pw1.widget_id, pw1.block, pw1.position, pw1.set_crumbs")->leftJoin('page_widgets as pw2', function (
-                $join
-            ) {
-                return $join->on('pw1.widget_id', '=', 'pw2.widget_id');
-            })->where('pw1.page_id', $formPageId)->toSQL();
+            $join
+        ) {
+            return $join->on('pw1.widget_id', '=', 'pw2.widget_id');
+        })->where('pw1.page_id', $formPageId)->toSQL();
 
         DB::statement("INSERT into page_widgets (page_id, widget_id, block, position, set_crumbs) $subSelect", [
             $formPageId,
@@ -138,8 +138,8 @@ class WidgetManagerDatabase extends WidgetManager
     }
 
     /**
-     * @param int $widgetId
-     * @param array   $locations [(int) {pageId} => ['block' => (string) '...', 'position' => (int) '...', 'set_crumbs'
+     * @param int   $widgetId
+     * @param array $locations   [(int) {pageId} => ['block' => (string) '...', 'position' => (int) '...', 'set_crumbs'
      *                           => (bool) '...']]
      */
     public function placeWidgetsOnPages($widgetId, array $locations)
@@ -153,10 +153,10 @@ class WidgetManagerDatabase extends WidgetManager
             }
 
             $insertData[] = [
-                'page_id'    => (int) $pageId,
-                'widget_id'  => (int) $widgetId,
-                'block'      => $options['block'],
-                'position'   => (int) array_get($options, 'position'),
+                'page_id' => (int) $pageId,
+                'widget_id' => (int) $widgetId,
+                'block' => $options['block'],
+                'position' => (int) array_get($options, 'position'),
                 'set_crumbs' => (bool) array_get($options, 'set_crumbs'),
             ];
         }
@@ -179,8 +179,8 @@ class WidgetManagerDatabase extends WidgetManager
             $query->delete();
         } else {
             $query->update([
-                'block'      => $location['block'],
-                'position'   => (int) array_get($location, 'position'),
+                'block' => $location['block'],
+                'position' => (int) array_get($location, 'position'),
                 'set_crumbs' => (bool) array_get($location, 'set_crumbs'),
             ]);
         }
