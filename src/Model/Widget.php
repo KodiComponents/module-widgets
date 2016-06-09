@@ -5,13 +5,16 @@ namespace KodiCMS\Widgets\Model;
 use DB;
 use KodiCMS\Pages\Model\Page;
 use Illuminate\Database\Eloquent\Model;
-use KodiCMS\Widgets\Contracts\WidgetManager;
+use KodiCMS\Widgets\Contracts\Model as WidgetContract;
+use KodiCMS\Widgets\Manager\WidgetManagerDatabase;
+use KodiCMS\Widgets\Traits\WidgetStates;
 use KodiCMS\Widgets\Widget\Temp as TempWidget;
 use KodiCMS\Widgets\Exceptions\WidgetException;
-use KodiCMS\Widgets\Manager\WidgetManagerDatabase;
 
-class Widget extends Model
+class Widget extends Model implements WidgetContract
 {
+    use WidgetStates;
+
     /**
      * @var array
      */
@@ -49,6 +52,31 @@ class Widget extends Model
     protected $widget = null;
 
     /**
+     * @var WidgetManagerDatabase
+     */
+    protected $manager;
+
+    /**
+     * Widget constructor.
+     *
+     * @param array $attributes
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->manager = app('widget.manager');
+    }
+
+    /**
+     * @return string
+     */
+    public function getWidgetClass()
+    {
+        return get_class($this->toWidget());
+    }
+
+    /**
      * @param string $template
      */
     public function setTemplateAttribute($template)
@@ -61,7 +89,7 @@ class Widget extends Model
      */
     public function getType()
     {
-        foreach (app('widget.manager')->getAvailableTypes() as $group => $types) {
+        foreach ($this->manager->getAvailableTypes() as $group => $types) {
             if (isset($types[$this->type])) {
                 return $types[$this->type];
             }
@@ -86,7 +114,7 @@ class Widget extends Model
             return $this->widget;
         }
 
-        if (! is_null($this->widget = app('widget.manager')->makeWidget($this->type, $this->name, $this->description, $this->settings))) {
+        if (! is_null($this->widget = $this->manager->makeWidget($this->type, $this->name, $this->description, $this->settings))) {
             $this->widget->setId($this->id);
 
             if ($this->isRenderable()) {
@@ -95,60 +123,12 @@ class Widget extends Model
 
             $this->widget->setRalatedWidgets($this->related);
         } else {
-            $this->widget = new TempWidget(app('widget.manager'), $this->name, $this->description);
+            $this->widget = new TempWidget($this->manager, $this->name, $this->description);
         }
 
         static::$cachedWidgets[$this->id] = $this->widget;
 
         return $this->widget;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWidgetable()
-    {
-        return ($this->exists and app('widget.manager')->isWidgetable(get_class($this->toWidget())));
-    }
-
-    /**
-     * @return bool
-     */
-    public function isHandler()
-    {
-        return app('widget.manager')->isHandler(get_class($this->toWidget()));
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRenderable()
-    {
-        return app('widget.manager')->isRenderable(get_class($this->toWidget()));
-    }
-
-    /**
-     * @return bool
-     */
-    public function isCacheable()
-    {
-        return app('widget.manager')->isCacheable(get_class($this->toWidget()));
-    }
-
-    /**
-     * @return bool
-     */
-    public function isClassExists()
-    {
-        return app('widget.manager')->isClassExists(get_class($this->toWidget()));
-    }
-
-    /**
-     * @return bool
-     */
-    public function isCorrupt()
-    {
-        return app('widget.manager')->isCorrupt(get_class($this->toWidget()));
     }
 
     public function scopeFilterByType($query, array $types)

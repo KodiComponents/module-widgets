@@ -3,7 +3,6 @@
 namespace KodiCMS\Widgets\Repository;
 
 use DB;
-use Illuminate\Http\Request;
 use KodiCMS\Widgets\Model\Widget;
 use KodiCMS\CMS\Repository\BaseRepository;
 

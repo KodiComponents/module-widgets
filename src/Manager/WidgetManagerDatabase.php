@@ -42,7 +42,6 @@ class WidgetManagerDatabase extends WidgetManager
     {
         $widgets = Widget::whereHas('pages', function ($q) use ($pageId) {
             $q->where('pages.id', (int) $pageId);
-
         })->with('related')->get();
 
         return static::buildWidgetCollection($widgets);

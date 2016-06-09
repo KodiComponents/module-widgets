@@ -11,16 +11,17 @@ class ModuleServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->app->singleton('widget.manager', function () {
-            return new WidgetManagerDatabase();
-        });
-
-        $this->app->alias('widget.manager', WidgetManager::class);
         $this->app['view']->addNamespace('snippets', snippets_path());
     }
 
     public function register()
     {
+        $this->app->singleton('widget.manager', function () {
+            return new WidgetManagerDatabase();
+        });
+
+        $this->app->alias('widget.manager', WidgetManager::class);
+        
         $this->registerProviders([
             BladeServiceProvider::class,
             EventsServiceProvider::class,
