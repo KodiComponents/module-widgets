@@ -24,7 +24,7 @@
 
 			<div class="input-group-btn">
 				{!! link_to_route('backend.widget.location', '', [$widget->getId()], [
-					'data-icon' => 'sitemap', 'class' => 'btn btn-xs btn-primary popup'
+					'data-icon' => 'sitemap', 'class' => 'btn btn-sm btn-primary popup'
 				]) !!}
 			</div>
 		</div>

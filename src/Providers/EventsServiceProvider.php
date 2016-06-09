@@ -46,7 +46,15 @@ class EventsServiceProvider extends BaseEventServiceProvider
 
         $events->listen('view.page.edit', function ($page) {
             if (acl_check('widgets::list') and $page->hasLayout()) {
-                echo view('widgets::widgets.page.iframe', compact('page'))->render();
+                // echo view('widgets::widgets.page.iframe', compact('page'))->render();
+
+                echo view('widgets::widgets.page.list', [
+                    'page' => $page,
+                    'widgetsCollection' => new PageWidgetCollection(
+                        app('widget.manager'),
+                        $page->id
+                    )
+                ])->render();
             }
         });
 
