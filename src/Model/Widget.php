@@ -5,17 +5,14 @@ namespace KodiCMS\Widgets\Model;
 use DB;
 use KodiCMS\Pages\Model\Page;
 use Illuminate\Database\Eloquent\Model;
-use KodiCMS\Widgets\Contracts\Model as WidgetContract;
-use KodiCMS\Widgets\Manager\WidgetManagerDatabase;
-use KodiCMS\Widgets\Traits\WidgetStates;
+use KodiCMS\Widgets\Contracts\WidgetManager;
 use KodiCMS\Widgets\Widget\Temp as TempWidget;
 use KodiCMS\Widgets\Exceptions\WidgetException;
-use KodiCMS\Widgets\Manager\WidgetManagerDatabase;
 use KodiComponents\Support\Filterable;
 
-class Widget extends Model implements WidgetContract
+class Widget extends Model
 {
-    use Filterable, WidgetStates;
+    use Filterable;
 
     /**
      * @var array
@@ -54,7 +51,7 @@ class Widget extends Model implements WidgetContract
     protected $widget = null;
 
     /**
-     * @var WidgetManagerDatabase
+     * @var WidgetManager
      */
     protected $manager;
 
@@ -66,16 +63,7 @@ class Widget extends Model implements WidgetContract
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-
         $this->manager = app('widget.manager');
-    }
-
-    /**
-     * @return string
-     */
-    public function getWidgetClass()
-    {
-        return get_class($this->toWidget());
     }
 
     /**
@@ -91,7 +79,7 @@ class Widget extends Model implements WidgetContract
      */
     public function getType()
     {
-        $types = app('widget.manager')->getAvailableTypes();
+        $types = $this->manager->getAvailableTypes();
 
         foreach ($types as $type) {
             if ($type->getType() == $this->type) {
@@ -133,6 +121,54 @@ class Widget extends Model implements WidgetContract
         static::$cachedWidgets[$this->id] = $this->widget;
 
         return $this->widget;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWidgetable()
+    {
+        return ($this->exists and $this->manager->isWidgetable(get_class($this->toWidget())));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHandler()
+    {
+        return $this->manager->isHandler(get_class($this->toWidget()));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRenderable()
+    {
+        return $this->manager->isRenderable(get_class($this->toWidget()));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCacheable()
+    {
+        return $this->manager->isCacheable(get_class($this->toWidget()));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isClassExists()
+    {
+        return $this->manager->isClassExists(get_class($this->toWidget()));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCorrupt()
+    {
+        return $this->manager->isCorrupt(get_class($this->toWidget()));
     }
 
     public function scopeFilterByType($query, array $types)
