@@ -10,7 +10,7 @@ class BladeServiceProvider extends ServiceProvider
     public function boot()
     {
         Blade::directive('widget', function ($expression) {
-            return "<?php echo (new \\KodiCMS\\Widgets\\Engine\\WidgetRenderHTML{$expression})->render(); ?>";
+            return "<?php echo (new \\KodiCMS\\Widgets\\Engine\\WidgetRenderHTML(app('widget.manager')->getWidgetById{$expression}))->render(); ?>";
         });
 
         Blade::directive('snippet', function ($expression) {

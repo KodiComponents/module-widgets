@@ -68,11 +68,13 @@ class WidgetManagerDatabase extends WidgetManager
     /**
      * @param $id
      *
-     * @return \KodiCMS\Widgets\Contracts\Widget
+     * @return \KodiCMS\Widgets\Contracts\Widget|null
      */
     public function getWidgetById($id)
     {
-        return Widget::find($id)->toWidget();
+        if ($widget = Widget::find($id)) {
+            return $widget->toWidget();
+        }
     }
 
     /**
