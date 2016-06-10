@@ -50,10 +50,12 @@ class EventsServiceProvider extends BaseEventServiceProvider
 
                 echo view('widgets::widgets.page.list', [
                     'page' => $page,
-                    'widgetsCollection' => new PageWidgetCollection(
-                        app('widget.manager'),
-                        $page->id
-                    )
+                    'widgetsCollection' => (
+                        new PageWidgetCollection(
+                            app('widget.manager'),
+                            $page->id
+                        )
+                    )->getRegisteredWidgets()
                 ])->render();
             }
         });

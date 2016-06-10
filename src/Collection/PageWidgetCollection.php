@@ -2,6 +2,7 @@
 
 namespace KodiCMS\Widgets\Collection;
 
+use KodiCMS\Widgets\Contracts\WidgetCollectionItem;
 use Meta;
 use KodiCMS\Widgets\Contracts\WidgetRenderable;
 use KodiCMS\Widgets\Contracts\WidgetManager as WidgetManagerInterface;
@@ -19,6 +20,8 @@ class PageWidgetCollection extends WidgetCollection
      */
     public function __construct(WidgetManagerInterface $widgetManager, $pageId)
     {
+        parent::__construct();
+        
         $this->widgetManager = $widgetManager;
 
         $widgets = $widgetManager->getWidgetsByPage($pageId);
@@ -38,27 +41,12 @@ class PageWidgetCollection extends WidgetCollection
      */
     public function placeWidgetsToLayoutBlocks()
     {
-        foreach ($this->registeredWidgets as $widget) {
+        $this->registeredWidgets->each(function (WidgetCollectionItem $widget) {
             if (($object = $widget->getObject()) instanceof WidgetRenderable) {
                 Meta::loadPackage($object->getMediaPackages());
             }
-        }
+        });
 
         parent::placeWidgetsToLayoutBlocks();
-    }
-
-    /**
-     * @return $this
-     */
-    protected function buildWidgetCrumbs()
-    {
-        foreach ($this->registeredWidgets as $id => $widget) {
-            $widget = $widget['object'];
-            if ($widget->hasBreadcrumbs()) {
-                $widget->changeBreadcrumbs($this->getBreadcrumbs());
-            }
-        }
-
-        return $this;
     }
 }
