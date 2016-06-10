@@ -45,18 +45,39 @@ CMS.controllers.add('page.get.edit', function () {
         reload_blocks(layout_file);
     });
 
-    $('body').on('click', '.popup-widget-item', function () {
-        var widget_id = $(this).data('id');
+    new Vue({
+        el: '#page-widgets',
+        data: function() {
+            this.widgets = {};
 
-        Api.put('/api.widget', {
-            widget_id: widget_id,
-            page_id: PAGE.id
-        }, function (response) {
-            window.location = '#widgets';
-            Popup.close();
-            $('#widget-list tbody').append(response.content);
-            reload_blocks(layout_file);
-        });
+            return {
+                widgets: this.widgets
+            }
+        },
+        methods: {
+            hasWidgets: function() {
+                return _.size(this.widgets) > 0;
+            },
+            groupHasWidgets: function(widgets) {
+                return _.size(widgets) > 0;
+            },
+            openPopup: function() {
+                this.$http.get(Api.parseUrl('/api.page.widgets'), {page_id: PAGE.id}).then(function (response) {
+                    this.widgets = response.data.content;
+                    $('#widgetsPopupList').modal('show');
+                });
+            },
+            place: function(widget) {
+                Api.put('/api.widget', {widget_id: widget.id, page_id: PAGE.id}, function (response) {
+                    $('#widgetsPopupList').modal('hide');
+
+                    $('#widget-list tbody').append(response.content);
+                    reload_blocks(PAGE.layout);
+
+                    CMS.ui.init('icon');
+                });
+            }
+        }
     });
 });
 

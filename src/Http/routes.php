@@ -17,11 +17,11 @@ Route::group(['prefix' => backend_url_segment(), 'as' => 'backend.', 'middleware
     Route::post('widget/create', ['as' => 'widget.create.post', 'uses' => 'WidgetController@postCreate']);
     Route::get('widget/{id}/template', ['as' => 'widget.template', 'uses' => 'WidgetController@getTemplate']);
     Route::post('widget/{id}/delete', ['as' => 'widget.delete', 'uses' => 'WidgetController@postDelete']);
-    Route::get('widget/popup/{id}', ['as' => 'widget.popup_list', 'uses' => 'WidgetController@getPopupList']);
     Route::get('widget/{type}', ['as' => 'widget.list.by_type', 'uses' => 'WidgetController@getIndex']);
 });
 
 Route::group(['as' => 'api.', 'middleware' => ['api', 'backend']], function () {
+    RouteAPI::get('page.widgets', ['as' => 'page.widgets', 'uses' => 'API\WidgetController@getListForPage']);
     RouteAPI::put('widget', ['as' => 'widget.place', 'uses' => 'API\WidgetController@putPlace']);
     RouteAPI::post('widget.set.template', [
         'as'   => 'widget.set.template',

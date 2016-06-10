@@ -6,20 +6,32 @@ use DB;
 use KodiCMS\API\Http\Controllers\System\Controller;
 use KodiCMS\Pages\Model\Page;
 use KodiCMS\Widgets\Model\Widget;
+use KodiCMS\Widgets\Repository\WidgetRepository;
 
 class WidgetController extends Controller
 {
+    /**
+     * @param WidgetRepository $repository
+     */
+    public function getListForPage(WidgetRepository $repository)
+    {
+        $pageId = (int) $this->getRequiredParameter('page_id');
+        $widgets = $repository->getByPageId($pageId);
+
+        $this->setContent($widgets);
+    }
+
     public function putPlace()
     {
         $widgetId = (int) $this->getRequiredParameter('widget_id');
         $pageId = (int) $this->getRequiredParameter('page_id');
-        $block = $this->getRequiredParameter('block');
+        $block = $this->getParameter('block', 0);
 
         DB::table('page_widgets')->insert([
-                'page_id'   => $pageId,
-                'widget_id' => $widgetId,
-                'block'     => $block,
-            ]);
+            'page_id'   => $pageId,
+            'widget_id' => $widgetId,
+            'block'     => $block,
+        ]);
 
         $widget = Widget::findOrFail($widgetId);
         $this->setContent(view('widgets::widgets.page.row', [

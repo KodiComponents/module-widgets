@@ -57,19 +57,6 @@ class WidgetController extends BackendController
     }
 
     /**
-     * @param WidgetRepository $repository
-     * @param int          $pageId
-     *
-     * @return \View
-     */
-    public function getPopupList(WidgetRepository $repository, $pageId)
-    {
-        $widgets = $repository->getByPageId($pageId);
-
-        return $this->setContent('widgets.page.ajax_list', compact('widgets'));
-    }
-
-    /**
      * @param WidgetManager $widgetManager
      * @param string        $type
      */
@@ -171,6 +158,7 @@ class WidgetController extends BackendController
         ]));
 
         $layoutBlocks = (new LayoutBlock)->getBlocksGroupedByLayouts();
+
         $this->setContent(
             'widgets.location', compact('widget', 'pages', 'widgetBlocks', 'blocksToExclude', 'layoutBlocks')
         );
