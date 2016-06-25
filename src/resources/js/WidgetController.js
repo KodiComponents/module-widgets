@@ -144,14 +144,9 @@ CMS.controllers.add('widget.get.location', function () {
 
         $('.table tbody tr[data-parent-id="' + id + '"]').each(function () {
             var $select = $(this).find('select.widget-blocks');
-            var $options = $select.data('blocks');
 
-            for (i in $options) {
-                var $option = $options[i];
-                if ($option['id'] == block_name) {
-                    $select.val($option['id']).trigger('change');
-                }
-
+            if ($select.find('option[value=' + block_name + ']').length) {
+                $select.val(block_name).trigger('change');
             }
 
             $(this).find('input.widget-position').val(position);
