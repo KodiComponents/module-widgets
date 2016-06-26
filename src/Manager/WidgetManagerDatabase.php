@@ -128,11 +128,10 @@ class WidgetManagerDatabase extends WidgetManager
         intval($toPageId);
         intval($formPageId);
 
-        $subSelect = DB::table('page_widgets as pw1')->selectRaw("'$toPageId' as page_id, pw1.widget_id, pw1.block, pw1.position, pw1.set_crumbs")->leftJoin('page_widgets as pw2', function (
-            $join
-        ) {
-            return $join->on('pw1.widget_id', '=', 'pw2.widget_id');
-        })->where('pw1.page_id', $formPageId)->toSQL();
+        $subSelect = DB::table('page_widgets as pw1')
+          ->selectRaw("'$toPageId' as page_id, pw1.widget_id, pw1.block, pw1.position, pw1.set_crumbs")
+          ->where('pw1.page_id', $formPageId)
+          ->toSQL();
 
         DB::statement("INSERT into page_widgets (page_id, widget_id, block, position, set_crumbs) $subSelect", [
             $formPageId,
